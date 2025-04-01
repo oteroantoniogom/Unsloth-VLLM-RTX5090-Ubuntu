@@ -1,123 +1,124 @@
 # 🚀 AI Environment Setup: Unsloth + vLLM (GPU Training)
-This repository contains an automated bash script (install_dep.sh) designed to easily and correctly set up all necessary dependencies and libraries to run GPU-accelerated training using Unsloth and vLLM on Ubuntu Linux.
 
-The script prepares your environment specifically optimized for CUDA-compatible NVIDIA GPUs, ensuring seamless installation of PyTorch nightly, Triton, Xformers, and other key ML packages.
+This repository contains an automated bash script (**`install_dep.sh`**) designed to quickly and reliably set up all dependencies required to run GPU-accelerated training using **Unsloth** and **vLLM** on Ubuntu Linux.
+
+Specifically optimized for CUDA-compatible NVIDIA GPUs, the script ensures seamless installation of PyTorch nightly, Triton, Xformers, and other essential ML packages.
+
+---
 
 ## 🎯 Main Objective
-Ensure a reliable and fully operational installation of all dependencies and libraries required to efficiently run Unsloth integrated with vLLM, leveraging GPU acceleration for state-of-the-art training and inference workloads on Ubuntu.
+
+Provide a reliable, fully operational environment to efficiently run **Unsloth** integrated with **vLLM**, enabling GPU acceleration for cutting-edge training and inference workloads on Ubuntu.
+
+---
 
 ## ✅ What Does This Script Do?
-Updates system dependencies:
-Installs necessary build tools and compilers (gcc-14, g++-14, cmake, ninja-build, etc.).
 
-Python 3.10 virtual environment:
-Automatically creates or uses an existing virtual environment (venv) in your current directory.
+- **Updates System Dependencies**  
+  Installs build tools and compilers (`gcc-14`, `g++-14`, `cmake`, `ninja-build`, etc.).
 
-Installs GPU-optimized ML libraries:
+- **Sets Up Python 3.10 Virtual Environment**  
+  Creates or reuses a virtual environment (`venv`) in your current directory.
 
-PyTorch nightly (CUDA 12.8 support)
+- **Installs GPU-Optimized ML Libraries**:
+  - **PyTorch Nightly** (CUDA 12.8)
+  - **Unsloth** (efficient training & inference)
+  - **vLLM** (fast LLM inference)
+  - **Triton** (custom optimized kernels)
+  - **Xformers** (efficient transformer operations)
+  - Additional ML libraries: `scikit-learn`, `matplotlib`, `pybind11`
 
-Unsloth for efficient training & inference
+- **Verification of Installation**  
+  Confirms correct installation by importing key Python modules automatically.
 
-vLLM from a specific commit optimized for inference
-
-Triton from a custom branch (for optimized kernels)
-
-Xformers (efficient transformer architectures)
-
-Supporting libraries: scikit-learn, matplotlib, pybind11, etc.
-
-Verifies each installation after setup by importing and testing key Python modules.
+---
 
 ## 📋 Requirements
-OS: Ubuntu or Debian-based Linux
 
-Administrative Privileges: Root access (or sudo) to install system packages
+- **OS**: Ubuntu or Debian-based Linux  
+- **Privileges**: `sudo` access (to install system packages)  
+- **GPU & CUDA**: NVIDIA GPU with CUDA drivers installed (recommended CUDA 12.8)  
+- **Internet**: Required for cloning repositories and downloading packages
 
-GPU & CUDA Toolkit: NVIDIA GPU with CUDA drivers installed (CUDA 12.8 recommended)
-
-Internet: Needed to clone repositories and install Python packages
+---
 
 ## 🚀 Quickstart Guide
-Follow these steps to quickly set up your AI training environment:
 
-Clone this repository or download the script:
+Follow these steps to set up your GPU training environment quickly:
 
-bash
-Copiar
-Editar
+### 1. Clone the Repository
+
+```bash
 git clone https://github.com/yourusername/your-repo.git
 cd your-repo
-Make the script executable:
+````
 
-bash
-Copiar
-Editar
+### 2. Make the Script Executable
+```bash
 chmod +x install_dep.sh
-Run the script with sudo privileges:
+```
 
-bash
-Copiar
-Editar
+### 3. Run the Instalation Script
+```bash
 sudo ./install_dep.sh
-Follow on-screen instructions.
+```
 
-Activate the Python virtual environment after installation:
-
-bash
-Copiar
-Editar
+### 4. Activate the Virtual Environment
+```bash
 source venv/bin/activate
-🔎 Verifying Installation
-The script automatically performs verification steps at the end of the installation:
+```
 
-Checks PyTorch version and CUDA availability.
+## 🔎 Verifying Installation
+The script automatically verifies installations by checking PyTorch and CUDA status, as well as imports for Unsloth, Triton, and Xformers.
 
-Confirms successful imports of Unsloth, Triton, and Xformers.
-
-To manually verify afterward run, for instance, on a Jupyter Notebook:
+To manually verify afterward (e.g., in a Jupyter Notebook):
+```python
 from unsloth import FastLanguageModel, is_bfloat16_supported
 import torch
-print(torch.__version__)  
-print(torch.cuda.is_available())  # Debe devolver True
-print(torch.cuda.device_count())  # Debe mostrar al menos 1
-print(torch.cuda.get_device_name(0))  # Debe mostrar el nombre de tu GPU
 
-max_seq_length = 1024 # Can increase for longer reasoning traces
-lora_rank = 64 # Larger rank = smarter, but slower
+print(torch.__version__)  
+print(torch.cuda.is_available())        # Should return True
+print(torch.cuda.device_count())        # Should show at least 1
+print(torch.cuda.get_device_name(0))    # Should show your GPU name
+
+max_seq_length = 1024  # Adjust as needed
+lora_rank = 64         # Higher = smarter but slower
 
 model, tokenizer = FastLanguageModel.from_pretrained(
-    model_name = "Qwen/Qwen2.5-3B-Instruct",
-    max_seq_length = max_seq_length,
-    load_in_4bit = True, # False for LoRA 16bit
-    fast_inference = True, # Enable vLLM fast inference
-    max_lora_rank = lora_rank,
-    gpu_memory_utilization = 0.5, # Reduce if out of memory
+    model_name="Qwen/Qwen2.5-3B-Instruct",
+    max_seq_length=max_seq_length,
+    load_in_4bit=True,          # False for LoRA 16-bit
+    fast_inference=True,        # Enable vLLM fast inference
+    max_lora_rank=lora_rank,
+    gpu_memory_utilization=0.5, # Reduce if out of memory
 )
 
 model = FastLanguageModel.get_peft_model(
     model,
-    r = lora_rank, # Choose any number > 0 ! Suggested 8, 16, 32, 64, 128
-    target_modules = [
+    r=lora_rank,  # Common values: 8, 16, 32, 64, 128
+    target_modules=[
         "q_proj", "k_proj", "v_proj", "o_proj",
         "gate_proj", "up_proj", "down_proj",
-    ], # Remove QKVO if out of memory
-    lora_alpha = lora_rank,
-    use_gradient_checkpointing = "unsloth", # Enable long context finetuning
-    random_state = 3407,
+    ],  # Modify modules if needed
+    lora_alpha=lora_rank,
+    use_gradient_checkpointing="unsloth",
+    random_state=3407,
 )
+```
 
-## Customizing the Setup
-CUDA versions:
-Modify PyTorch installation URLs or CUDA variables inside the script if your CUDA version differs from the recommended CUDA 12.8.
+## ⚙️ Customizing the Setup
+CUDA Versions:
+Modify installation URLs or CUDA variables inside install_dep.sh if your CUDA version differs from the recommended CUDA 12.8.
 
-Repository Forks & Commits:
-You can easily point to official repositories or alternative branches/commits by modifying URLs and commit hashes inside the script.
+Repository Branches & Commits:
+You can easily point to official repositories or custom branches/commits by modifying URLs and commit hashes within the script.
 
 ## 📄 License
-This script is provided under the MIT License. Feel free to modify and distribute, following license guidelines.
+This project is licensed under the MIT License. See LICENSE for details.
 
 ## 📞 Support & Issues
-If you encounter any problems or have suggestions, please open an issue in this repository or submit a PR for enhancements.
+Encounter any issues or have suggestions? Feel free to open an issue or submit a PR for improvements.
+
+---
 
 Happy GPU-accelerated training with Unsloth & vLLM! 🚀✨
