@@ -1,5 +1,5 @@
 # 🚀 AI Environment Setup: Unsloth + vLLM (GPU Training)
-This repository contains an automated bash script (install_env.sh) designed to easily and correctly set up all necessary dependencies and libraries to run GPU-accelerated training using Unsloth and vLLM on Ubuntu Linux.
+This repository contains an automated bash script (install_dep.sh) designed to easily and correctly set up all necessary dependencies and libraries to run GPU-accelerated training using Unsloth and vLLM on Ubuntu Linux.
 
 The script prepares your environment specifically optimized for CUDA-compatible NVIDIA GPUs, ensuring seamless installation of PyTorch nightly, Triton, Xformers, and other key ML packages.
 
@@ -11,7 +11,7 @@ Updates system dependencies:
 Installs necessary build tools and compilers (gcc-14, g++-14, cmake, ninja-build, etc.).
 
 Python 3.10 virtual environment:
-Automatically creates or uses an existing virtual environment (venventrenar) in your current directory.
+Automatically creates or uses an existing virtual environment (venv) in your current directory.
 
 Installs GPU-optimized ML libraries:
 
@@ -53,13 +53,13 @@ Make the script executable:
 bash
 Copiar
 Editar
-chmod +x install_env.sh
+chmod +x install_dep.sh
 Run the script with sudo privileges:
 
 bash
 Copiar
 Editar
-sudo ./install_env.sh
+sudo ./install_dep.sh
 Follow on-screen instructions.
 
 Activate the Python virtual environment after installation:
@@ -67,7 +67,7 @@ Activate the Python virtual environment after installation:
 bash
 Copiar
 Editar
-source venventrenar/bin/activate
+source venv/bin/activate
 🔎 Verifying Installation
 The script automatically performs verification steps at the end of the installation:
 
